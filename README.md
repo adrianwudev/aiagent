@@ -38,14 +38,18 @@ pip install -r .\requirements.txt
     pyenv install 3.13.0
     ```
     This process downloads the official Python installer and installs it within `pyenv-win`'s managed directory.
+4. **To check all python versions in pyenv**
+   ```powershell
+   pyenv versions
+   ```
 
-4.  **Set Global Python Version (Optional but Recommended):**
+5.  **Set Global Python Version (Optional but Recommended):**
     To make Python 3.13.0 the default for all new PowerShell sessions:
     ```powershell
     pyenv global 3.13.0
     ```
 
-5.  **Verify Installed Python Version:**
+6.  **Verify Installed Python Version:**
     Confirm the active Python version:
     ```powershell
     python --version

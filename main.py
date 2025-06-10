@@ -1,15 +1,7 @@
 from dotenv import load_dotenv
 import os
-# from pydantic import BaseModel # If no need Pydantic
-# from langchain_openai import AzureChatOpenAI
-# from langchain_core.prompts import ChatPromptTemplate # If no need LangChain
-# from langchain_core.output_parsers import PydanticOutputParser # If no need Pydantic
-# from langchain.agents import create_tool_calling_agent, AgentExecutor # If dont use LangChain Agent
-# from tools import search_tool, wiki_tool # If dont use LangChain
-# from memory.PersistentFileMemory import PersistentFileMemory # If dont use LangChain
-
 from smolagents.models import AzureOpenAIServerModel
-from smolagents import CodeAgent, WebSearchTool # InferenceClientModel # No Need Anymore InferenceClientModel
+from smolagents import CodeAgent, WebSearchTool
 
 load_dotenv("sample.env")
 
@@ -25,66 +17,49 @@ class PatchedAzureOpenAIServerModel(AzureOpenAIServerModel):
 
 if __name__ == "__main__":
     model = PatchedAzureOpenAIServerModel(
-        model_id="4.1-mini",
+        model_id=os.environ.get("AZURE_OPENAI_MODEL_ID"),
         api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
         api_version=os.environ.get("AZURE_OPENAI_API_VERSION"),
         azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
         custom_role_conversions={"system": "assistant", "tool-call": "assistant", "tool-response": "user"}
     )
-    agent = CodeAgent(tools=[WebSearchTool()], model=model, add_base_tools=True)
-    query = "https://www.google.com/search?q=snake+game"
+    agent = CodeAgent(
+        tools=[
+            WebSearchTool(),
+            # Tool.from_langchain() #TODO Make tool to write the testing result into txt file
+        ],
+        model=model,
+        additional_authorized_imports=[
+            "selenium",
+            "selenium.webdriver.common.by",
+            "selenium.webdriver.common.keys",
+            "webdriver_manager.chrome",
+            "selenium.webdriver.chrome.service",
+
+            # "selenium.webdriver.support.ui",
+            # "selenium.common.exceptions",
+        ]
+    )
+    query = (
+        "Use Selenium WebDriver to open the page and simulate a QA test: "
+
+        # "Make your web browser in full screen mode."
+        "Please enter this link: https://territorial.io/."
+        "1. Click Multiplayer button at the center of web page. Wait for 5 sec."
+        "2. Click Ready button. Wait for team matched, it may take more than 1 min."
+        "3. Click left mouse click, you will see a sword icon, and click it with left mouse click again."
+        "4. After step 3, you can see your territory is growing."
+        "5. Keep playing till the game end."
+        "6. Read the LEADERBOARD put it into report."
+        
+        # "After open the link, you will see a input box in the bottom with phrase 'Ask Gemini', it's the input box you need."
+        # "If you can not find the input box, it's next to a '+' sign. Try to find it."
+        # "1. Type a creative question and click summit button in the right side of the input box."
+        # "1.1. In this step, you might be transfer to human verify page, please study the article provided in step 0, and try to overcome it."
+        # "2. Analyze the response and summit another interesting question based on its reply."
+        # "3. Observe and do the same, until 10 conversations."
+        "7. Please give me a summary of what happened."
+        # "NOTE: If you failed to find any input box or summit button, "
+        # "please re-try 10 times with new selenium script until you find it."
+    )
     agent.run(query)
-
-
-# class ResearchResponse(BaseModel):
-#     topic: str
-#     summary: str
-#     sources: list[str]
-#     tools_used: list[str]
-
-
-# llm = AzureChatOpenAI(
-#     azure_deployment=os.getenv("AZURE_DEPLOYMENT_NAME"),
-#     api_version="2025-01-01-preview",
-# )
-# parser = PydanticOutputParser(pydantic_object=ResearchResponse)
-
-# prompt = ChatPromptTemplate.from_messages(
-#     [
-#         (
-#             "system",
-#             """
-#             You are a research assistant that will help generate a research paper.
-#             Answer the user query and use neccessary tools. 
-#             Wrap the output in this format and provide no other text\n{format_instructions}
-#             """,
-#         ),
-#         ("placeholder", "{chat_history}"),
-#         ("human", "{query}"),
-#         ("placeholder", "{agent_scratchpad}"),
-#     ]
-# ).partial(format_instructions=parser.get_format_instructions())
-
-# tools = [search_tool, wiki_tool]
-# agent = create_tool_calling_agent(
-#     llm=llm,
-#     prompt=prompt,
-#     tools=tools,
-# )
-
-# memory = PersistentFileMemory(
-#     memory_key="chat_history",
-#     return_messages=True,
-#     file_path="chat_memory.json"
-# )
-
-# agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
-# query = input("Enter your query: ")
-# raw_response = agent_executor.invoke({"query": query})
-
-# try:
-#     structured_response = parser.parse(raw_response.get("output"))
-#     print("Prompt Successfully Parsed.")
-#     print(structured_response)
-# except Exception as e:
-#     print("Error parsing response", e, "Raw Response - ", raw_response)
