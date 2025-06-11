@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 import os
 from smolagents.models import AzureOpenAIServerModel
-from smolagents import CodeAgent, WebSearchTool
+from smolagents import CodeAgent, WebSearchTool, Tool
+from memory.PersistentFileMemory import PersistentFileMemory
 
 load_dotenv("sample.env")
 
@@ -23,6 +24,17 @@ if __name__ == "__main__":
         azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
         custom_role_conversions={"system": "assistant", "tool-call": "assistant", "tool-response": "user"}
     )
+
+    # Add memory
+    memory = PersistentFileMemory(file_path="memory.json")
+
+    history_prompt = ""
+    for message in memory.chat_memory.messages:
+        if message.type == "human":
+            history_prompt += f"User: {message.content}\n"
+        elif message.type == "ai":
+            history_prompt += f"AI: {message.content}\n"
+
     agent = CodeAgent(
         tools=[
             WebSearchTool(),
@@ -36,30 +48,33 @@ if __name__ == "__main__":
             "webdriver_manager.chrome",
             "selenium.webdriver.chrome.service",
 
-            # "selenium.webdriver.support.ui",
-            # "selenium.common.exceptions",
+            "selenium.webdriver.support.ui",
+            "selenium.common.exceptions",
+            "selenium.webdriver.chrome.options"
         ]
     )
     query = (
-        "Use Selenium WebDriver to open the page and simulate a QA test: "
+        "Use Selenium WebDriver, launch a chrome webpage to open the page and simulate a QA test: "
 
         # "Make your web browser in full screen mode."
-        "Please enter this link: https://territorial.io/."
-        "1. Click Multiplayer button at the center of web page. Wait for 5 sec."
-        "2. Click Ready button. Wait for team matched, it may take more than 1 min."
-        "3. Click left mouse click, you will see a sword icon, and click it with left mouse click again."
-        "4. After step 3, you can see your territory is growing."
-        "5. Keep playing till the game end."
-        "6. Read the LEADERBOARD put it into report."
+        "Please enter this link: https://gemini.google.com/. Make the browser full screen. Follow the steps below."
+        "0. please read the DOM structure after you get in the Gemini page."
+        "0.1. The location of the input box is at the bottom of the page."
+        "1. Wait for 5 seconds, Type a creative question in the input box."
+        # "this class is the dive for input box class='text-input-field_textarea-wrapper ng-tns-c2117731150-3', please find the input box according to this information."
+        "1.1 The submit button will show up after you type the question, make sure the text you typed is really in the input box."
+        "1.2. Click the submit button to send the question."
+        "2.1. Wait for 5 seconds, observe the response from Gemini."
+        "2.2. Type another creative question based on the response, and click the submit button again."
+        "3. You must repeat step 2 until you have 20 conversations with Gemini."
         
-        # "After open the link, you will see a input box in the bottom with phrase 'Ask Gemini', it's the input box you need."
-        # "If you can not find the input box, it's next to a '+' sign. Try to find it."
-        # "1. Type a creative question and click summit button in the right side of the input box."
-        # "1.1. In this step, you might be transfer to human verify page, please study the article provided in step 0, and try to overcome it."
-        # "2. Analyze the response and summit another interesting question based on its reply."
-        # "3. Observe and do the same, until 10 conversations."
-        "7. Please give me a summary of what happened."
+        "Final. Please give me a summary of what happened."
         # "NOTE: If you failed to find any input box or summit button, "
         # "please re-try 10 times with new selenium script until you find it."
     )
-    agent.run(query)
+
+    full_prompt = history_prompt + "\n" + query
+
+    output = agent.run(full_prompt)
+
+    memory.save_context({"input": query}, {"output": output})
