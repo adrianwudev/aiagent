@@ -1,109 +1,4 @@
-from langchain_community.tools import WikipediaQueryRun, DuckDuckGoSearchRun
-from langchain_community.utilities import WikipediaAPIWrapper
 from langchain.tools import Tool
-from datetime import datetime
-
-search = DuckDuckGoSearchRun()
-search_tool = Tool(
-    name="search",
-    func=search.run,
-    description="Search the web for information",
-)
-
-api_wrapper = WikipediaAPIWrapper(top_k_results=5, doc_content_chars_max=100)
-wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
-
-
-def save_to_txt(data: str, filename: str = "research_output.txt"):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    formatted_text = f"--- Research Output ---\nTimestamp: {timestamp}\n\n{data}\n\n"
-
-    with open(filename, "a", encoding="utf-8") as f:
-        f.write(formatted_text)
-    
-    return f"Data successfully saved to {filename}"
-
-save_tool = Tool(
-    name="save_text_to_file",
-    func=save_to_txt,
-    description="Saves structured research data to a text file.",
-)
-
-def save_conversation_and_script(conversation_data: str, script_data: str = "", filename: str = "gemini_conversation.txt"):
-    """
-    儲存與 Gemini AI 的對話和 Selenium 腳本
-    """
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    formatted_text = f"""
-=== Gemini AI Conversation ===
-Timestamp: {timestamp}
-
-Conversation:
-{conversation_data}
-
-"""
-    
-    if script_data:
-        formatted_text += f"""
-Selenium Script:
-{script_data}
-
-"""
-    
-    formatted_text += "=" * 50 + "\n\n"
-    
-    with open(filename, "a", encoding="utf-8") as f:
-        f.write(formatted_text)
-    
-    return f"Conversation and script saved to {filename}"
-
-conversation_save_tool = Tool(
-    name="save_conversation_and_script",
-    func=save_conversation_and_script,
-    description="Saves Gemini AI conversation and Selenium scripts to a text file.",
-)
-
-def save_selenium_script(script_content: str, filename: str = "selenium_scripts.py"):
-    """
-    儲存 Selenium 腳本到 Python 檔案
-    """
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    formatted_script = f"""
-# Selenium Script - Generated on {timestamp}
-# ================================================
-
-{script_content}
-
-# ================================================
-"""
-    
-    with open(filename, "a", encoding="utf-8") as f:
-        f.write(formatted_script)
-    
-    return f"Selenium script saved to {filename}"
-
-def read_selenium_scripts(filename: str = "selenium_scripts.py"):
-    """
-    讀取之前儲存的 Selenium 腳本
-    """
-    try:
-        with open(filename, "r", encoding="utf-8") as f:
-            content = f.read()
-        return f"Previous Selenium scripts from {filename}:\n\n{content}"
-    except FileNotFoundError:
-        return f"No previous Selenium scripts found in {filename}. Starting fresh."
-
-selenium_script_tool = Tool(
-    name="save_selenium_script",
-    func=save_selenium_script,
-    description="Saves Selenium script to a Python file for future reference.",
-)
-
-read_script_tool = Tool(
-    name="read_selenium_scripts",
-    func=read_selenium_scripts,
-    description="Reads previously saved Selenium scripts for reference.",
-)
 
 def find_gemini_elements(driver_source: str = "", element_type: str = "input"):
     """
@@ -118,12 +13,8 @@ def find_gemini_elements(driver_source: str = "", element_type: str = "input"):
         from selenium.common.exceptions import TimeoutException, NoSuchElementException
         import time
         
-        # 假設 driver 是全局變數或在某處可訪問
-        # 這裡我們返回定位策略而不是實際執行
-        
         strategies = {
             "input": [
-                # 主要的輸入框選擇器
                 "textarea[placeholder*='Message']",
                 "textarea[placeholder*='Ask']", 
                 "div[contenteditable='true']",
@@ -132,7 +23,6 @@ def find_gemini_elements(driver_source: str = "", element_type: str = "input"):
                 "div[role='textbox']",
                 "input[placeholder*='Ask']",
                 "textarea[placeholder*='Type']",
-                # XPath 選擇器
                 "//textarea[contains(@placeholder, 'Message')]",
                 "//div[@contenteditable='true']",
                 "//textarea[contains(@placeholder, 'Ask')]",
@@ -140,7 +30,6 @@ def find_gemini_elements(driver_source: str = "", element_type: str = "input"):
                 "//div[@role='textbox']"
             ],
             "submit": [
-                # 提交按鈕選擇器
                 "button[type='submit']",
                 "button[aria-label*='Send']",
                 "button[data-testid*='send']",
@@ -148,21 +37,18 @@ def find_gemini_elements(driver_source: str = "", element_type: str = "input"):
                 "button[title*='Send']",
                 "svg[aria-label*='Send']",
                 "button:has(svg[aria-label*='Send'])",
-                # XPath 選擇器
                 "//button[contains(@aria-label, 'Send')]",
                 "//button[@type='submit']",
                 "//svg[contains(@aria-label, 'Send')]",
                 "//button[.//svg[contains(@aria-label, 'Send')]]"
             ],
             "response": [
-                # 回應區域選擇器
                 "div[data-testid*='response']",
                 "div[class*='response']",
                 "div[class*='message']",
                 "div[class*='conversation']",
                 "div[class*='chat']",
                 "div[class*='output']",
-                # XPath 選擇器
                 "//div[contains(@class, 'response')]",
                 "//div[contains(@class, 'message')]",
                 "//div[contains(@class, 'conversation')]"
@@ -196,26 +82,19 @@ def debug_page_elements(page_url: str = "https://gemini.google.com/app"):
         from webdriver_manager.chrome import ChromeDriverManager
         import time
         
-        # 設定 Chrome 選項
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # 無頭模式
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         
-        # 建立 driver
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
         
         try:
-            # 訪問頁面
             driver.get(page_url)
-            time.sleep(5)  # 等待頁面載入
-            
-            # 尋找所有可能的輸入元素
+            time.sleep(5)
             input_elements = []
             button_elements = []
-            
-            # 尋找 textarea
             textareas = driver.find_elements(By.TAG_NAME, "textarea")
             for i, elem in enumerate(textareas):
                 try:
@@ -230,8 +109,6 @@ def debug_page_elements(page_url: str = "https://gemini.google.com/app"):
                     })
                 except:
                     pass
-            
-            # 尋找 input
             inputs = driver.find_elements(By.TAG_NAME, "input")
             for i, elem in enumerate(inputs):
                 try:
@@ -246,8 +123,6 @@ def debug_page_elements(page_url: str = "https://gemini.google.com/app"):
                     })
                 except:
                     pass
-            
-            # 尋找 contenteditable div
             contenteditable_divs = driver.find_elements(By.CSS_SELECTOR, "div[contenteditable='true']")
             for i, elem in enumerate(contenteditable_divs):
                 try:
@@ -261,8 +136,6 @@ def debug_page_elements(page_url: str = "https://gemini.google.com/app"):
                     })
                 except:
                     pass
-            
-            # 尋找按鈕
             buttons = driver.find_elements(By.TAG_NAME, "button")
             for i, elem in enumerate(buttons):
                 try:
@@ -277,8 +150,6 @@ def debug_page_elements(page_url: str = "https://gemini.google.com/app"):
                     })
                 except:
                     pass
-            
-            # 尋找 SVG 按鈕
             svg_buttons = driver.find_elements(By.TAG_NAME, "svg")
             for i, elem in enumerate(svg_buttons):
                 try:
@@ -293,7 +164,6 @@ def debug_page_elements(page_url: str = "https://gemini.google.com/app"):
                         })
                 except:
                     pass
-            
             result = f"""
 Page Analysis for {page_url}:
 ================================
@@ -306,27 +176,20 @@ BUTTON ELEMENTS ({len(button_elements)} found):
 
 RECOMMENDED SELECTORS:
 """
-            
-            # 推薦選擇器
             for elem in input_elements:
                 if elem.get("placeholder") and "message" in elem.get("placeholder", "").lower():
                     result += f"- Input: textarea[placeholder*='{elem['placeholder']}']\n"
                 elif elem.get("aria-label") and "message" in elem.get("aria-label", "").lower():
                     result += f"- Input: textarea[aria-label*='{elem['aria-label']}']\n"
-            
             for elem in button_elements:
                 if elem.get("aria-label") and "send" in elem.get("aria-label", "").lower():
                     result += f"- Button: button[aria-label*='{elem['aria-label']}']\n"
-            
             return result
-            
         finally:
             driver.quit()
-            
     except Exception as e:
         return f"Error in debug_page_elements: {str(e)}"
 
-# 建立工具
 find_elements_tool = Tool(
     name="find_gemini_elements",
     func=find_gemini_elements,
@@ -337,4 +200,4 @@ debug_elements_tool = Tool(
     name="debug_page_elements",
     func=debug_page_elements,
     description="Analyzes the Gemini page and returns all input and button elements with recommended selectors.",
-)
+) 
