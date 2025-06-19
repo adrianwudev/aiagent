@@ -2,8 +2,7 @@ from dotenv import load_dotenv
 import os
 from smolagents.models import AzureOpenAIServerModel
 from smolagents import CodeAgent, WebSearchTool, Tool
-from tools import conversation_save_tool, selenium_script_tool, read_script_tool
-from selenium_tools.element_tools import find_elements_tool, debug_elements_tool
+from selenium_tools.save_selenium_script_tool import SaveSeleniumScriptTool
 
 load_dotenv("sample.env")
 
@@ -29,11 +28,8 @@ if __name__ == "__main__":
     agent = CodeAgent(
         tools=[
             WebSearchTool(),
-            Tool.from_langchain(conversation_save_tool), # Make tool to write the testing result into txt file
-            Tool.from_langchain(selenium_script_tool), # Save Selenium scripts
-            Tool.from_langchain(read_script_tool), # Read previous Selenium scripts
-            Tool.from_langchain(find_elements_tool), # Find Gemini page elements
-            Tool.from_langchain(debug_elements_tool), # Debug page elements
+            # Tool.from_langchain(SaveSeleniumScriptTool()), # Make tool to write the testing result into txt file
+            SaveSeleniumScriptTool(),
         ],
         model=model,
         additional_authorized_imports=[
@@ -47,88 +43,33 @@ if __name__ == "__main__":
             "selenium.webdriver.support.expected_conditions",
             "selenium.common.exceptions",
             "selenium.webdriver.chrome.options",
+            "selenium.webdriver.common.action_chains",
             "time",
             "json"
         ]
     )
     query = (
-        """
-        Use Selenium WebDriver, launch a chrome webpage to open the page and simulate a QA test: 
-
         # IMPORTANT: Before starting, read previous Selenium scripts for reference
-        # Use the read_selenium_scripts tool to get previous scripts and learn from them
-        
-        # Make your web browser in full screen mode.
-        Please enter this link: https://gemini.google.com/app. Follow the steps below.
-        
-        0. Before starting the automation:
-           0.1. Use the read_selenium_scripts tool to read previous Selenium scripts
-           0.2. Analyze the previous scripts to understand successful patterns and avoid common mistakes
-           0.3. Plan your approach based on what worked before
-        
-        1. After loading the page, wait for 3-5 seconds for the page to fully load.
-        1.1. Use browser developer tools (F12) to inspect the DOM structure and find the input elements.
-        1.2. The input box is typically located at the bottom of the page, look for elements with:
-            - CSS selectors like: 'textarea[placeholder*="Message"]', 'div[contenteditable="true"]', 'input[type="text"]'
-            - XPath like: '//textarea[contains(@placeholder, "Message")]', '//div[@contenteditable="true"]'
-            - Class names containing: 'input', 'textarea', 'message', 'chat'
-        1.3. If the input is not immediately visible, scroll to the bottom of the page.
-        
-        2. Try multiple strategies to locate the input box:
-           2.1. First try: driver.find_element(By.CSS_SELECTOR, 'textarea[placeholder*="Message"]')
-           2.2. If not found, try: driver.find_element(By.CSS_SELECTOR, 'div[contenteditable="true"]')
-           2.3. If not found, try: driver.find_element(By.XPATH, '//textarea[contains(@placeholder, "Message")]')
-           2.4. If not found, try: driver.find_element(By.XPATH, '//div[@contenteditable="true"]')
-           2.5. If not found, try: driver.find_element(By.CSS_SELECTOR, 'input[type="text"]')
-           2.6. If still not found, try these additional selectors:
-                - 'textarea[aria-label*="Message"]'
-                - 'div[role="textbox"]'
-                - 'input[placeholder*="Ask"]'
-                - 'textarea[placeholder*="Ask"]'
-           2.7. If still not found, print all textarea and input elements on the page for debugging:
-                textareas = driver.find_elements(By.TAG_NAME, 'textarea')
-                inputs = driver.find_elements(By.TAG_NAME, 'input')
-                print(f"Found {len(textareas)} textareas and {len(inputs)} inputs")
-                for i, elem in enumerate(textareas + inputs):
-                    print(f"Element {i}: {elem.get_attribute('outerHTML')[:200]}")
-         
-        3. Once you find the input element:
-           3.1. Clear it first: element.clear()
-           3.2. Type your question slowly with explicit waits between characters
-           3.3. Verify the text was entered by getting the element's value
-           3.4. Look for the submit button (usually appears after typing) with selectors like:
-                - 'button[type="submit"]', 'button[aria-label*="Send"]', 'button[data-testid*="send"]'
-                - 'button[aria-label*="Submit"]', 'button[title*="Send"]'
-                - 'svg[aria-label*="Send"]', 'button:has(svg[aria-label*="Send"])'
-         
-        4. Click the submit button and wait for response:
-           4.1. Wait for 5-10 seconds for Gemini's response to appear
-           4.2. Look for response elements with selectors like:
-                - 'div[data-testid*="response"]', 'div[class*="response"]', 'div[class*="message"]'
-                - 'div[class*="conversation"]', 'div[class*="chat"]'
-           4.3. Save your question and Gemini's response using the conversation_save_tool
-           4.4. Wait for the input box to be ready for the next question
-         
-        5. Repeat step 4 until you have 20 conversations with Gemini.
-        
-        6. IMPORTANT: After completing all conversations:
-           6.1. Use the save_selenium_script tool to save your complete Selenium script
-           6.2. Include all the code you wrote, including imports, setup, and the main automation logic
-           6.3. Make sure to save the script with proper comments and structure
-        
-        Important debugging tips:
-        - If elements are not found, use driver.page_source to print the HTML and analyze the structure
-        - Use WebDriverWait with explicit waits instead of time.sleep() when possible
-        - If the page uses dynamic loading, wait for elements to be present and clickable
-        - Check if there are any overlays, modals, or popups that need to be dismissed first
-        - If you see a "Sign in" button, you may need to handle authentication first
-        - Try using JavaScript executor to scroll and focus on elements if normal methods fail
-        
-        Final. Please give me a summary of what happened and save your Selenium script.
+        # Use the read_selenium_scripts tool to get previous scripts and learn from them to optimize your drawing strategy and element interactions.
         """
+        Use Selenium WebDriver, enable UI to play the Quick, Draw! game at https://quickdraw.withgoogle.com/ and assess your ability.
+        
+        
+        Follow these steps to play the game and record your performance:
+        
+        0. **Initial Setup & Game Start:**
+           0.1. Navigate to: https://quickdraw.withgoogle.com/
+           0.2. Wait for the page to load (3-5 seconds).
+           0.3. Locate and click the "Let's Draw!" button to start the game. You need to find a button with text like "Let's Draw!".
+           0.4. IMPORTANT: If there's an overlay or introduction, make sure to dismiss it or click "Got It!" to proceed.
+       
+        
+        Final. Use tool save_selenium_script_tool to save the script you just used. And add summary on it to explian what's wrong, what's good and what can you do to improve in the future.
+        Print me the result you got for this round of selenium using, is there any difficulty? What can you do to improve?
+       """
     )
 
 
     output = agent.run(query)
 
-    memory.save_context({"input": query}, {"output": output})
+    # memory.save_context({"input": query}, {"output": output})
