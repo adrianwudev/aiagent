@@ -1,8 +1,0 @@
---- Selenium Test Result ---
-Timestamp: 20250620_165551
-
-Result: Successfully played one game round with stable UI interaction and stroke drawing.
-
-Difficulty: No major difficulties encountered; overlay handling and clicking robust.
-
-Improvement: Plan to implement multi-round drawing and adaptive stroke shapes next.

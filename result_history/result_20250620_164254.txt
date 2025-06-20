@@ -1,8 +1,0 @@
---- Selenium Test Result ---
-Timestamp: 20250620_164254
-
-Result: Failed to start game
-
-Difficulty: None significant.
-
-Improvement: Replaced disallowed imports with tool calls. Used manual base64 decoder.

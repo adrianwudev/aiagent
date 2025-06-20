@@ -1,24 +1,20 @@
-from typing import Optional
 from smolagents.tools import Tool
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
+import json
 from selenium_tools.session_context import SeleniumSessionContext
 
-class QuickDrawCanvasGetterTool(Tool):
+class CanvasInfoTool(Tool):
     """
-    Retrieve the <canvas id="drawingCanvas"> element from Quick, Draw! game and return its size, coordinates, and style attributes.
+    Get the bounding rect, width, height, and style of the canvas element (id='drawingCanvas').
     The driver instance is managed internally and shared across all tools using SeleniumSessionContext.
     This tool does NOT open or reload the URL; it only interacts with the current page/session.
     """
-    name = "quickdraw_canvas_getter"
-    description = (
-        "Get the <canvas id='drawingCanvas'> element from Quick, Draw! and return its size, coordinates, and style attributes."
-    )
+    name = "canvas_info_tool"
+    description = "Get the bounding rect, width, height, and style of the canvas element (id='drawingCanvas')."
     inputs = {
-        "wait_time": {"type": "integer", "description": "Seconds to wait for the canvas element to appear. Default: 10", "required": False, "nullable": True}
+        "wait_time": {"type": "integer", "description": "Wait seconds", "required": False, "nullable": True}
     }
     output_type = "string"
 
@@ -27,7 +23,6 @@ class QuickDrawCanvasGetterTool(Tool):
 
     def forward(self, wait_time: int = 10) -> str:
         driver = SeleniumSessionContext().get_driver()
-        wait_time = wait_time or 10
         try:
             canvas = WebDriverWait(driver, wait_time).until(
                 EC.presence_of_element_located((By.ID, "drawingCanvas"))
@@ -36,13 +31,14 @@ class QuickDrawCanvasGetterTool(Tool):
             height = canvas.get_attribute("height")
             style = canvas.get_attribute("style")
             rect = driver.execute_script("return arguments[0].getBoundingClientRect();", canvas)
-            info = (
-                f"Canvas found!\n"
-                f"Width: {width}\n"
-                f"Height: {height}\n"
-                f"Style: {style}\n"
-                f"Bounding rect: {rect}\n"
-            )
-            return info
+            info = {
+                "width": width,
+                "height": height,
+                "style": style,
+                "boundingClientRect": rect
+            }
+            return json.dumps(info)
         except Exception as e:
-            return f"Error getting canvas: {e}" 
+            return f"Error: {e}"
+        finally:
+            driver.quit() 

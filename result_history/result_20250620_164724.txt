@@ -1,8 +1,0 @@
---- Selenium Test Result ---
-Timestamp: 20250620_164724
-
-Result: Exception encountered: None
-
-Difficulty: Click interception solved by aggressive overlay removal before clicking.
-
-Improvement: Implement goal-adapted strokes, multi-rounds and randomness in next iterations.

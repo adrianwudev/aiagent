@@ -1,8 +1,0 @@
---- Selenium Test Result ---
-Timestamp: 20250620_165110
-
-Result: Exception encountered: None
-
-Difficulty: Added offset to ActionChains move_to_element to avoid transparent overlays blocking clicks.
-
-Improvement: Add drawing adaptation to prompts and multi-round gameplay in future.

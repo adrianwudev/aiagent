@@ -1,8 +1,0 @@
---- Selenium Test Result ---
-Timestamp: 20250620_164613
-
-Result: Exception encountered: None
-
-Difficulty: No major difficulties encountered. Used fallback drawing method.
-
-Improvement: Implement goal-based strokes, multi-rounds, and stroke randomness in future.
