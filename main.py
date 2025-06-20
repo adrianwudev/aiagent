@@ -2,18 +2,17 @@ from dotenv import load_dotenv
 import os
 from smolagents.models import AzureOpenAIServerModel
 from smolagents import CodeAgent, WebSearchTool, Tool
-from selenium_tools.save_selenium_script_tool import SaveSeleniumScriptTool
-from selenium_tools.read_selenium_script_tool import ReadSeleniumScriptTool
-from selenium_tools.clicker_tool import ClickerTool
-from selenium_tools.quickdraw_canvas_getter import QuickDrawCanvasGetterTool
+from selenium_tools.save_selenium_script_tool import save_selenium_script_tool
+from selenium_tools.read_selenium_script_tool import read_selenium_script_tool
+from selenium_tools.clicker_tool import clicker_tool
+from selenium_tools.quickdraw_canvas_getter import quickdraw_canvas_getter
 from result_tools.save_result_tool import SaveResultTool
 from result_tools.read_result_tool import ReadResultTool
-from selenium_tools.canvas_info_tool import CanvasInfoTool
-from selenium_tools.draw_on_canvas_tool import DrawOnCanvasTool
-from selenium_tools.robust_click_tool import RobustClickTool
-from selenium_tools.save_canvas_image_tool import SaveCanvasImageTool
-from selenium_tools.quickdraw_word_reader import QuickDrawWordReaderTool
-from selenium_tools.session_context import SeleniumSessionContext
+from selenium_tools.canvas_info_tool import canvas_info_tool
+from selenium_tools.draw_on_canvas_tool import draw_on_canvas_tool
+from selenium_tools.robust_click_tool import robust_click_tool
+from selenium_tools.save_canvas_image_tool import save_canvas_image_tool
+from selenium_tools.quickdraw_word_reader import quickdraw_word_reader
 from selenium_tools.navigate_tool import NavigateTool
 
 
@@ -41,17 +40,17 @@ if __name__ == "__main__":
     agent = CodeAgent(
         tools=[
             WebSearchTool(),
-            SaveSeleniumScriptTool(),
-            ReadSeleniumScriptTool(),
-            ClickerTool(),
-            QuickDrawCanvasGetterTool(),
+            save_selenium_script_tool,
+            read_selenium_script_tool,
+            clicker_tool,
+            quickdraw_canvas_getter,
             SaveResultTool(),
             ReadResultTool(),
-            CanvasInfoTool(),
-            DrawOnCanvasTool(),
-            RobustClickTool(),
-            SaveCanvasImageTool(),
-            QuickDrawWordReaderTool(),
+            canvas_info_tool,
+            draw_on_canvas_tool,
+            robust_click_tool,
+            save_canvas_image_tool,
+            quickdraw_word_reader,
             NavigateTool(),
         ],
         model=model,
