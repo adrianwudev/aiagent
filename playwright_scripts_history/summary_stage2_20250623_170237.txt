@@ -1,4 +1,0 @@
-Stage: 2
-Target: Read prompt and prepare drawing plan
-Failure Reason: No error
-Suggestions: Use type(x) is dict instead of isinstance to avoid type errors.

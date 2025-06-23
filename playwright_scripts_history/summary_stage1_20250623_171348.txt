@@ -1,4 +1,0 @@
-Stage: 1
-Target: Stage 1: Click the 'Let's Draw!' button
-Failure Reason: No error
-Suggestions: Proceed to Stage 2.

@@ -1,4 +1,0 @@
-Stage: 2
-Target: Current stage is 2, waiting for stage 3.
-Failure Reason: No error
-Suggestions: Click 'Got It!' button promptly and once at stage 3.

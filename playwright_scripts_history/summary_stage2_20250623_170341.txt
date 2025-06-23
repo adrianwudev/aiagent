@@ -1,4 +1,0 @@
-Stage: 2
-Target: Execute drawing plan on canvas
-Failure Reason: Unexpected exception during drawing stage: isinstance() arg 2 must be a type, a tuple of types, or a union
-Suggestions: At stage 4, immediately perform drawing commands from plan without delay.

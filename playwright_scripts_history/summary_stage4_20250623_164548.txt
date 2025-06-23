@@ -1,4 +1,0 @@
-Stage: 4
-Target: Perform drawing and save image with fallback screenshot
-Failure Reason: No error
-Suggestions: No suggestion

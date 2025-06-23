@@ -1,8 +1,0 @@
---- Selenium Test Result ---
-Timestamp: 20250623_142411
-
-Result: {'success': False, 'error': "'Playwright' object has no attribute '__exit__'", 'details': ''}
-
-Difficulty: Encountered error: 'Playwright' object has no attribute '__exit__'
-
-Improvement: Add better error handling and more robust selectors.

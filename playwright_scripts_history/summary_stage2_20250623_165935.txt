@@ -1,4 +1,0 @@
-Stage: 2
-Target: Read prompt and prepare drawing plan
-Failure Reason: No error
-Suggestions: Ensure all isinstance calls use literal type objects like 'dict', and avoid variables or strings.

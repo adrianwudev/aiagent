@@ -1,4 +1,0 @@
-Stage: 2
-Target: Current stage is 2, waiting for stage 4.
-Failure Reason: No error
-Suggestions: Use explicit type equality checks (`type(x) is dict`) to avoid isinstance errors during drawing stage.

@@ -1,4 +1,0 @@
-Stage: 1
-Target: Stage 1: Click the 'Let's Draw!' button
-Failure Reason: Unexpected stage detected: 2. Expected stage 1.
-Suggestions: Ensure this script runs only at stage 1.
