@@ -1,0 +1,36 @@
+Stage: 0
+Target: Running main automation loop
+Failure Reason: Unhandled exception in main: isinstance() arg 2 must be a type, a tuple of types, or a union
+Traceback (most recent call last):
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 1064, in evaluate_try
+    evaluate_ast(stmt, state, static_tools, custom_tools, authorized_imports)
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 197, in _check_return
+    result = func(expression, state, static_tools, custom_tools, authorized_imports=authorized_imports)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 1412, in evaluate_ast
+    return evaluate_if(expression, *common_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 929, in evaluate_if
+    test_result = evaluate_ast(if_statement.test, state, static_tools, custom_tools, authorized_imports)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 197, in _check_return
+    result = func(expression, state, static_tools, custom_tools, authorized_imports=authorized_imports)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 1370, in evaluate_ast
+    return evaluate_unaryop(expression, *common_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 349, in evaluate_unaryop
+    operand = evaluate_ast(expression.operand, state, static_tools, custom_tools, authorized_imports)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 197, in _check_return
+    result = func(expression, state, static_tools, custom_tools, authorized_imports=authorized_imports)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 1357, in evaluate_ast
+    return evaluate_call(expression, *common_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\workspace\Wits\aiagent\venv\Lib\site-packages\smolagents\local_python_executor.py", line 835, in evaluate_call
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: isinstance() arg 2 must be a type, a tuple of types, or a union
+
+Suggestions: Check logs, retry after fixing errors.

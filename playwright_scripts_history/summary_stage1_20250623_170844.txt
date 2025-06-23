@@ -1,0 +1,4 @@
+Stage: 1
+Target: Click 'Let's Draw!' button on Home page
+Failure Reason: No error
+Suggestions: 

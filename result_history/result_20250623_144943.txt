@@ -1,0 +1,8 @@
+--- Selenium Test Result ---
+Timestamp: 20250623_144943
+
+Result: Drew a simple cat on prompt 'cat' and saved canvas image 'None'.
+
+Difficulty: Unable to extract actual prompt from page; used fallback prompt and generic drawing.
+
+Improvement: Implement OCR or visual recognition to read prompt directly from canvas or page screenshot.

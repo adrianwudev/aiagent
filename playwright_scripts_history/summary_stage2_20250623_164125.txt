@@ -1,0 +1,4 @@
+Stage: 2
+Target: Fallback: Click 'Got It!' button after 3 retries in stage 2
+Failure Reason: No error
+Suggestions: No suggestion

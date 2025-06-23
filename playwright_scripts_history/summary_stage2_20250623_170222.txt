@@ -1,0 +1,4 @@
+Stage: 2
+Target: 
+Failure Reason: Unexpected exception: isinstance() arg 2 must be a type, a tuple of types, or a union
+Suggestions: Promptly click 'Got It!' button once at stage 3.

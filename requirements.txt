@@ -7,5 +7,4 @@ python-dotenv
 pydantic
 duckduckgo-search
 smolagents
-selenium
-webdriver-manager
+playwright
